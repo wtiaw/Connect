@@ -98,6 +98,26 @@ bool UButtonToDrag::NativeOnDrop(const FGeometry& MovieSceneBlends, const FDragD
 					}
 					this->LinesIndex = PostButton->LinesIndex;
 					PlayerController->Lines[this->LinesIndex].DownButton = this;
+				}else
+				{
+					if (PostButton)
+					{
+						int Index = PostButton->LinesIndex;
+						if (PostButton->ButtonType == EButtonType::Ebt_Up)
+						{
+							PlayerController->Lines[Index].DownButton = nullptr;
+							PlayerController->Lines[Index].UpButton->LinesIndex = -1;
+							PlayerController->Lines[Index].UpButton = nullptr;
+							PlayerController->RemovedIndex.AddUnique(Index);
+						}
+						else
+						{
+							PlayerController->Lines[Index].UpButton = nullptr;
+							PlayerController->Lines[Index].DownButton->LinesIndex = -1;
+							PlayerController->Lines[Index].DownButton = nullptr;
+							PlayerController->RemovedIndex.AddUnique(Index);
+						}
+					}
 				}
 			}
 			else if (PostButtonType == EButtonType::Ebt_Down)
@@ -113,6 +133,27 @@ bool UButtonToDrag::NativeOnDrop(const FGeometry& MovieSceneBlends, const FDragD
 					}
 					this->LinesIndex = PostButton->LinesIndex;
 					PlayerController->Lines[this->LinesIndex].UpButton = this;
+				}
+				else
+				{
+					if (PostButton)
+					{
+						int Index = PostButton->LinesIndex;
+						if (PostButton->ButtonType == EButtonType::Ebt_Up)
+						{
+							PlayerController->Lines[Index].DownButton = nullptr;
+							PlayerController->Lines[Index].UpButton->LinesIndex = -1;
+							PlayerController->Lines[Index].UpButton = nullptr;
+							PlayerController->RemovedIndex.AddUnique(Index);
+						}
+						else
+						{
+							PlayerController->Lines[Index].UpButton = nullptr;
+							PlayerController->Lines[Index].DownButton->LinesIndex = -1;
+							PlayerController->Lines[Index].DownButton = nullptr;
+							PlayerController->RemovedIndex.AddUnique(Index);
+						}
+					}
 				}
 			}
 		}
