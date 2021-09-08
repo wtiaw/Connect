@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "Components/CanvasPanel.h"
 #include "Components/UniformGridPanel.h"
 #include "Connect/Base/MyPlayerController.h"
 #include "DragContainer.generated.h"

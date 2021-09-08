@@ -4,7 +4,6 @@
 #include "Connect/Button/ButtonToDrag.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Connect/Base/MyPlayerController.h"
-#include "SceneOutliner/Public/SceneOutlinerDragDrop.h"
 
 void UButtonToDrag::NativeConstruct()
 {
@@ -114,6 +113,30 @@ bool UButtonToDrag::NativeOnDrop(const FGeometry& MovieSceneBlends, const FDragD
 					}
 					this->LinesIndex = PostButton->LinesIndex;
 					PlayerController->Lines[this->LinesIndex].UpButton = this;
+				}
+			}
+		}
+		else
+		{
+			if (PlayerController)
+			{
+				if (PostButton)
+				{
+					int Index = PostButton->LinesIndex;
+					if (PostButton->ButtonType == EButtonType::Ebt_Up)
+					{
+						PlayerController->Lines[Index].DownButton = nullptr;
+						PlayerController->Lines[Index].UpButton->LinesIndex = -1;
+						PlayerController->Lines[Index].UpButton = nullptr;
+						PlayerController->RemovedIndex.AddUnique(Index);
+					}
+					else
+					{
+						PlayerController->Lines[Index].UpButton = nullptr;
+						PlayerController->Lines[Index].DownButton->LinesIndex = -1;
+						PlayerController->Lines[Index].DownButton = nullptr;
+						PlayerController->RemovedIndex.AddUnique(Index);
+					}
 				}
 			}
 		}

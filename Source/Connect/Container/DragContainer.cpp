@@ -3,6 +3,7 @@
 #include "Components/UniformGridSlot.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
+#include "Connect/Base/MyDragDropOperation.h"
 
 void UDragContainer::NativeTick(const FGeometry& MovieSceneBlends, float InDeltaTime)
 {
@@ -45,9 +46,11 @@ void UDragContainer::NativeConstruct()
 	}
 }
 
+
+
 int32 UDragContainer::NativePaint(const FPaintArgs& MovieSceneBlends, const FGeometry& AllottedGeometry,
-	const FSlateRect& MyCullingRect, FSlateWindowElementList& OutDrawElements, int32 LayerId,
-	const FWidgetStyle& InWidgetStyle, bool bParentEnabled) const
+                                  const FSlateRect& MyCullingRect, FSlateWindowElementList& OutDrawElements, int32 LayerId,
+                                  const FWidgetStyle& InWidgetStyle, bool bParentEnabled) const
 {
 	Super::NativePaint(MovieSceneBlends, AllottedGeometry, MyCullingRect, OutDrawElements, LayerId,
 	                   InWidgetStyle,
@@ -66,7 +69,7 @@ int32 UDragContainer::NativePaint(const FPaintArgs& MovieSceneBlends, const FGeo
 				FLinearColor PreColor = Color1;
 				if (UpPosition.X == DownPosition.X)
 				{
-					FVector2D PositionOffset = (UpPosition - DownPosition)/DegreesOfSubdivision;
+					FVector2D PositionOffset = (UpPosition - DownPosition) / DegreesOfSubdivision;
 					FVector2D PrePosition = DownPosition;
 					for (int j = 0; j < DegreesOfSubdivision; j++)
 					{
@@ -74,25 +77,69 @@ int32 UDragContainer::NativePaint(const FPaintArgs& MovieSceneBlends, const FGeo
 						UWidgetBlueprintLibrary::DrawLine(Context,
 						                                  PrePosition,
 						                                  CurrentPosition,
-						                                  PreColor, true, 5.f);
+						                                  PreColor, true, 6.f);
 						PrePosition = CurrentPosition;
 						PreColor = PreColor + ColorOffset;
 					}
 				}
 				else
 				{
-					UWidgetBlueprintLibrary::DrawLine(Context,
-												DownPosition,
-												FVector2D(DownPosition.X, UpPosition.Y - 15.f),
-												FColor::Red, true,5.f);
-					UWidgetBlueprintLibrary::DrawLine(Context,
-												FVector2D(DownPosition.X, UpPosition.Y - 15.f),
-												FVector2D(UpPosition.X, UpPosition.Y - 15.f),
-												FColor::Red,true, 5.f);
-					UWidgetBlueprintLibrary::DrawLine(Context,
-												FVector2D(UpPosition.X, UpPosition.Y - 15.f),
-												UpPosition,
-												FColor::Red, true, 5.f);
+					FVector2D Position1 = DownPosition;
+					FVector2D Position2 = FVector2D(DownPosition.X, UpPosition.Y - 15.f);
+					FVector2D Position3 = FVector2D(UpPosition.X, UpPosition.Y - 15.f);
+					FVector2D Position4 = UpPosition;
+
+					float Length3 = (Position4 - Position3).Size();
+					float Length2 = (Position3 - Position2).Size();
+					float Length1 = (Position2 - Position1).Size();
+					float Length = Length1 + Length2 + Length3;
+					float LengthPreDegree = Length / DegreesOfSubdivision;
+
+					int Num2 = ((Length2 / LengthPreDegree) > 1) ? (int)(Length2 / LengthPreDegree) : 1;
+					int Num3 = ((15 / LengthPreDegree) > 1) ? (int)(15 / LengthPreDegree) : 1;
+					int Num1 = DegreesOfSubdivision - Num2 - Num3;
+
+					UE_LOG(LogTemp,Warning,TEXT("%d %d %d"),Num1,Num2,Num3);
+
+					FVector2D Line1PrePosition = Position1;
+					FVector2D Line2PrePosition = Position2;
+					FVector2D Line3PrePosition = Position3;
+
+					FVector2D Line1Gap = (Position2 - Position1) / Num1;
+					FVector2D Line2Gap = (Position3 - Position2) / Num2;
+					FVector2D Line3Gap = (Position4 - Position3) / Num3;
+
+					FLinearColor CurrentColor = Color1;
+					for (int j = 0; j < Num1; j++)
+					{
+						FVector2D Line1CurrentPosition = Line1PrePosition + Line1Gap;
+						UWidgetBlueprintLibrary::DrawLine(Context,
+						                                  Line1PrePosition,
+						                                  Line1CurrentPosition,
+						                                  CurrentColor, true, 5.f);
+						Line1PrePosition = Line1CurrentPosition;
+						CurrentColor += ColorOffset;
+					}
+					for (int j = 0; j < Num2; j++)
+					{
+						FVector2D Line2CurrentPosition = Line2PrePosition + Line2Gap;
+						UWidgetBlueprintLibrary::DrawLine(Context,
+						                                  Line2PrePosition,
+						                                  Line2CurrentPosition,
+						                                  CurrentColor, true, 5.f);
+						Line2PrePosition = Line2CurrentPosition;
+						CurrentColor += ColorOffset;
+					}
+					for (int j = 0; j < Num3; j++)
+					{
+						FVector2D Line3CurrentPosition = Line3PrePosition + Line3Gap;
+						UWidgetBlueprintLibrary::DrawLine(Context,
+													Line3PrePosition,
+													Line3CurrentPosition,
+													CurrentColor, true, 5.f);
+						Line3PrePosition = Line3CurrentPosition;
+						CurrentColor += ColorOffset;
+					}
 				}
 			}
 		}

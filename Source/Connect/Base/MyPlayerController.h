@@ -48,6 +48,9 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	UButtonToDrag* ControlledButton;
 
+	UPROPERTY(BlueprintReadWrite)
+	bool CanDrag = true;
+	
 public:
 	virtual void Tick(float DeltaSeconds) override;
 };
