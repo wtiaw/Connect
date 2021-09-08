@@ -2,21 +2,30 @@
 
 
 #include "Connect/Container/DragContainer.h"
+
+#include "Blueprint/SlateBlueprintLibrary.h"
 #include "Components/UniformGridSlot.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
+#include "Blueprint/WidgetLayoutLibrary.h"
 
-// void UDragContainer::NativeTick(const FGeometry& MovieSceneBlends, float InDeltaTime)
-// {
-// 	Super::NativeTick(MovieSceneBlends, InDeltaTime);
-//
-// 	if(PlayerController)
-// 	{
-// 		if (PlayerController->ControlledButton)
-// 		{
-// 			CanvasPanel_67->AddChild(PlayerController->ControlledButton);
-// 		}
-// 	}
-// }
+void UDragContainer::NativeTick(const FGeometry& MovieSceneBlends, float InDeltaTime)
+{
+	Super::NativeTick(MovieSceneBlends, InDeltaTime);
+
+	FVector2D PixelPosition;
+	FVector2D ViewportPosition;
+	
+	if(PlayerController)
+	{
+		if (PlayerController->ControlledButton)
+		{
+			USlateBlueprintLibrary::LocalToViewport(GetWorld(), MovieSceneBlends, FVector2D(0, 0), PixelPosition,
+			                                        ViewportPosition);
+			FVector2D MousePosition = UWidgetLayoutLibrary::GetMousePositionOnViewport(GetWorld());
+			PlayerController->ControlledButton->Position = MousePosition - ViewportPosition;
+		}
+	}
+}
 
 void UDragContainer::NativeConstruct()
 {
@@ -55,13 +64,40 @@ int32 UDragContainer::NativePaint(const FPaintArgs& MovieSceneBlends, const FGeo
 		{
 			if (i.UpButton != nullptr && i.DownButton != nullptr)
 			{
-				FVector2D Position1 = i.UpButton->Position;
-				FVector2D Position2 = i.DownButton->Position;
+				FVector2D UpPosition = i.UpButton->Position;
+				FVector2D DownPosition = i.DownButton->Position;
 
-				UWidgetBlueprintLibrary::DrawLine(Context, Position1, Position2);
+				if (UpPosition.X == DownPosition.X)
+				{
+					FVector2D PositionOffset = DownPosition - UpPosition;
+					FVector2D PrePosition = DownPosition;
+					for (int j = 0; j < DegreesOfSubdivision; j++)
+					{
+						FVector2D CurrentPosition = PrePosition + PositionOffset;
+						UWidgetBlueprintLibrary::DrawLine(Context,
+						                                  PrePosition,
+						                                  CurrentPosition,
+						                                  FColor::Red, true, 5.f);
+						PrePosition = CurrentPosition;
+					}
+				}
+				else
+				{
+					UWidgetBlueprintLibrary::DrawLine(Context,
+												DownPosition,
+												FVector2D(DownPosition.X, UpPosition.Y - 15.f),
+												FColor::Red, true,5.f);
+					UWidgetBlueprintLibrary::DrawLine(Context,
+												FVector2D(DownPosition.X, UpPosition.Y - 15.f),
+												FVector2D(UpPosition.X, UpPosition.Y - 15.f),
+												FColor::Red,true, 5.f);
+					UWidgetBlueprintLibrary::DrawLine(Context,
+												FVector2D(UpPosition.X, UpPosition.Y - 15.f),
+												UpPosition,
+												FColor::Red, true, 5.f);
+				}
 			}
 		}
-
 	return LayerId;
 }
 

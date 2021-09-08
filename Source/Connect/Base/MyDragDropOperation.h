@@ -13,5 +13,7 @@ UCLASS()
 class CONNECT_API UMyDragDropOperation : public UDragDropOperation
 {
 	GENERATED_BODY()
-	
+public:
+	UPROPERTY(BlueprintReadWrite,Meta = (ExposeOnSpawn=true))
+	class UButtonToDrag* Button; 
 };

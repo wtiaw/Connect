@@ -38,12 +38,12 @@ void UButtonToDrag::NativeOnDragDetected(const FGeometry& MovieSceneBlends, cons
 	if (ButtonType == EButtonType::Ebt_Up)
 	{
 		Line.UpButton = this;
-		Line.DownButton = nullptr;
+		Line.DownButton = PlayerController->ControlledButton;
 	}
 	else
 	{
 		Line.DownButton = this;
-		Line.UpButton = nullptr;
+		Line.UpButton = PlayerController->ControlledButton;
 	}
 	if (LinesIndex == -1)
 	{
@@ -56,6 +56,18 @@ void UButtonToDrag::NativeOnDragDetected(const FGeometry& MovieSceneBlends, cons
 		{
 			LinesIndex = PlayerController->Lines.Add(Line);
 		}
+	}else
+	{
+		if (ButtonType == EButtonType::Ebt_Up)
+		{
+			PlayerController->Lines[LinesIndex].DownButton->LinesIndex = -1;
+		}
+		else
+		{
+			PlayerController->Lines[LinesIndex].UpButton->LinesIndex = -1;
+		}
+
+		PlayerController->Lines[LinesIndex] = Line;
 	}
 }
 
@@ -85,11 +97,6 @@ bool UButtonToDrag::NativeOnDrop(const FGeometry& MovieSceneBlends, const FDragD
 						PlayerController->Lines[this->LinesIndex].DownButton = nullptr;
 						PlayerController->RemovedIndex.AddUnique(this->LinesIndex);
 					}
-					if (PlayerController->Lines[PostButton->LinesIndex].DownButton != nullptr && PlayerController->Lines[PostButton->LinesIndex].UpButton != nullptr)
-					{
-						PlayerController->Lines[PostButton->LinesIndex].DownButton->LinesIndex = -1;
-						PlayerController->Lines[PostButton->LinesIndex].DownButton = nullptr;
-					}
 					this->LinesIndex = PostButton->LinesIndex;
 					PlayerController->Lines[this->LinesIndex].DownButton = this;
 				}
@@ -104,11 +111,6 @@ bool UButtonToDrag::NativeOnDrop(const FGeometry& MovieSceneBlends, const FDragD
 						PlayerController->Lines[this->LinesIndex].DownButton = nullptr;
 						PlayerController->Lines[this->LinesIndex].UpButton = nullptr;
 						PlayerController->RemovedIndex.AddUnique(this->LinesIndex);
-					}
-					if (PlayerController->Lines[PostButton->LinesIndex].DownButton != nullptr && PlayerController->Lines[PostButton->LinesIndex].UpButton != nullptr)
-					{
-						PlayerController->Lines[PostButton->LinesIndex].UpButton->LinesIndex = -1;
-						PlayerController->Lines[PostButton->LinesIndex].UpButton = nullptr;
 					}
 					this->LinesIndex = PostButton->LinesIndex;
 					PlayerController->Lines[this->LinesIndex].UpButton = this;

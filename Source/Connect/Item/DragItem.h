@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Blueprint/UserWidget.h"
+#include "SpaceItem.h"
 #include "Components/SizeBox.h"
 #include "Connect/Button/ButtonToDrag.h"
 #include "DragItem.generated.h"
@@ -13,7 +13,7 @@ class UButtonToDrag;
  * 
  */
 UCLASS()
-class CONNECT_API UDragItem : public UUserWidget
+class CONNECT_API UDragItem : public USpaceItem
 {
 	GENERATED_BODY()
 
@@ -28,4 +28,6 @@ public:
 	UButtonToDrag* BP_DragButton_2;
 public:
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+
+	// virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
 };

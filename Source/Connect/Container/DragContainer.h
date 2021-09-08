@@ -23,11 +23,19 @@ public:
 	UPROPERTY(Meta =(BindWidget))
 	UUniformGridPanel* UniformGridPanel_51;
 
-	UPROPERTY(Meta = (BindWidget))
-	UCanvasPanel* CanvasPanel_67;
+	UPROPERTY(BlueprintReadWrite,EditAnywhere)
+	FLinearColor Color1;
 	
+	UPROPERTY(BlueprintReadWrite,EditAnywhere)
+	FLinearColor Color2;
+
+	UPROPERTY(BlueprintReadWrite)
+	FLinearColor ColorOffset;
+
+	UPROPERTY(BlueprintReadWrite,EditAnywhere)
+	int32 DegreesOfSubdivision;
 public:
-	// virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 	
 	virtual void NativeConstruct() override;
 

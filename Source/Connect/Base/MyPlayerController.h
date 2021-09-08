@@ -45,7 +45,7 @@ public:
 
 	TArray<int32> RemovedIndex;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	UButtonToDrag* ControlledButton;
 
 public:

@@ -2,7 +2,6 @@
 
 
 #include "Connect/Item/DragItem.h"
-
 #include "Components/CanvasPanelSlot.h"
 #include "Components/UniformGridSlot.h"
 
@@ -29,3 +28,5 @@ void UDragItem::NativeTick(const FGeometry& MovieSceneBlends, float InDeltaTime)
 	BP_DragButton_2->Position = FVector2D(Column * Size.X, Row * Size.Y) + Cast<UCanvasPanelSlot>(BP_DragButton_2->Slot)
 		->GetPosition();
 }
+
+
