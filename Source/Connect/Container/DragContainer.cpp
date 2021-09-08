@@ -1,8 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "Connect/Container/DragContainer.h"
-
 #include "Blueprint/SlateBlueprintLibrary.h"
 #include "Components/UniformGridSlot.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
@@ -14,7 +10,7 @@ void UDragContainer::NativeTick(const FGeometry& MovieSceneBlends, float InDelta
 
 	FVector2D PixelPosition;
 	FVector2D ViewportPosition;
-	
+	 
 	if(PlayerController)
 	{
 		if (PlayerController->ControlledButton)
@@ -67,9 +63,10 @@ int32 UDragContainer::NativePaint(const FPaintArgs& MovieSceneBlends, const FGeo
 				FVector2D UpPosition = i.UpButton->Position;
 				FVector2D DownPosition = i.DownButton->Position;
 
+				FLinearColor PreColor = Color1;
 				if (UpPosition.X == DownPosition.X)
 				{
-					FVector2D PositionOffset = DownPosition - UpPosition;
+					FVector2D PositionOffset = (UpPosition - DownPosition)/DegreesOfSubdivision;
 					FVector2D PrePosition = DownPosition;
 					for (int j = 0; j < DegreesOfSubdivision; j++)
 					{
@@ -77,8 +74,9 @@ int32 UDragContainer::NativePaint(const FPaintArgs& MovieSceneBlends, const FGeo
 						UWidgetBlueprintLibrary::DrawLine(Context,
 						                                  PrePosition,
 						                                  CurrentPosition,
-						                                  FColor::Red, true, 5.f);
+						                                  PreColor, true, 5.f);
 						PrePosition = CurrentPosition;
+						PreColor = PreColor + ColorOffset;
 					}
 				}
 				else
